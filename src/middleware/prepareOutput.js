@@ -40,7 +40,11 @@ module.exports = function (options, excludedMap) {
           populate: req._ermQueryOptions ? req._ermQueryOptions.populate : null
         }
 
-        req.erm.result = options.filter ? options.filter.filterObject(req.erm.result, opts) : req.erm.result
+        if (req._ermQueryOptions && req._ermQueryOptions['distinct']) {
+          req.erm.result = options.filter && options.filter.isExcluded(req._ermQueryOptions['distinct'], opts) ? [] : req.erm.result
+        } else {
+          req.erm.result = options.filter ? options.filter.filterObject(req.erm.result, opts) : req.erm.result
+        }
       }
 
       if (options.totalCountHeader && req.erm.totalCount) {
